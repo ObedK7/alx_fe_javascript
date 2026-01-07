@@ -73,12 +73,37 @@ function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+
+    const data = await response.json();
+
+    // Convert server data to quote format
+    const serverQuotes = data.slice(0, 5).map((post) => ({
+      text: post.title,
+      category: "Server",
+    }));
+
+    // Conflict resolution: server wins
+    quotes = serverQuotes;
+    saveQuotes();
+
+    alert("Quotes synced from server successfully!");
+  } catch (error) {
+    console.error("Error fetching quotes from server:", error);
+  }
+}
+
+setInterval(fetchQuotesFromServer, 60000); // every 60 seconds
+
 function loadQuotes() {
   const storedQuotes = localStorage.getItem("quotes");
   if (storedQuotes) {
     quotes = JSON.parse(storedQuotes);
   }
 }
+quotes = serverQuotes;
 
 loadQuotes();
 
