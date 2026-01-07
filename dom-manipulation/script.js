@@ -78,6 +78,35 @@ function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
+async function syncQuotes() {
+  try {
+    // 1. Fetch quotes from server
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await response.json();
+
+    // 2. Transform server data into your quote format
+    const serverQuotes = data.slice(0, 5).map((post) => ({
+      text: post.title,
+      category: "Server",
+    }));
+
+    // 3. Conflict resolution: server wins
+    quotes = serverQuotes;
+
+    // 4. Save updated quotes to local storage
+    saveQuotes();
+
+    // 5. Update the UI (if using filtering)
+    filterQuotes(); // or showRandomQuote(), depends on your app structure
+
+    alert("Quotes synced with server successfully!");
+  } catch (error) {
+    console.error("Error syncing quotes:", error);
+  }
+}
+
+setInterval(syncQuotes, 60000); // sync every 60 seconds
+
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts");
