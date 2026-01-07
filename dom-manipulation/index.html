@@ -12,6 +12,9 @@
 
     <button onclick="exportQuotes()">Export Quotes</button>
     <button onclick="fetchQuotesFromServer()">Sync with Server</button>
+    <button onclick="quotes.forEach(sendQuoteToServer)">
+      Sync All Quotes to Server
+    </button>
 
     <input
       type="file"
